@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() => runApp(const MyApp());
 
@@ -24,7 +25,7 @@ class _MyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.red
-      ..style = PaintingStyle.stroke
+      ..style = PaintingStyle.fill
       ..strokeWidth = 5;
     final path = Path();
     const inset = 10.0;
@@ -32,17 +33,13 @@ class _MyPainter extends CustomPainter {
     final maxX = size.width - inset;
     const minY = inset;
     final maxY = size.height - inset;
-    path.moveTo(minX, minY);
-    path.lineTo(maxX, minY);
-    path.lineTo((minX + maxX) / 2, maxY);
-    path.lineTo(minX, minY);
-    // Other Path methods include:
-    // addArc, addOval, addPath, addPolygon, addRect, addRRect,
-    // arcTo, arcToPoint, conicTo, cubicTo, quadraticBezierTo,
-    // relativeArcToPoint, relativeConicTo, relativeLineTo,
-    // relativeMoveTo, relativeQuadraticBezierTo,
-    // reset, shift, and transform.
-    // Also see the static Path method combine.
+    // Create a List of points for a triangle.
+    var points = <Offset>[
+      Offset((minX + maxX) / 2, minY),
+      Offset(maxX, maxY),
+      Offset(minX, maxY),
+    ];
+    path.addPolygon(points, true); // true to close
     path.close();
     canvas.drawPath(path, paint);
   }
@@ -62,11 +59,11 @@ class MyHomePage extends StatelessWidget {
         title: Text('Flutter Display Widgets'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
           children: <Widget>[
             _buildCustomPaint(),
             _buildImage(),
+            SvgPicture.asset('assets/images/github.svg'),
             _buildText(),
             _buildRichText(),
           ],
