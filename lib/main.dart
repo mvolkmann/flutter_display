@@ -61,15 +61,51 @@ class MyHomePage extends StatelessWidget {
       body: Center(
         child: ListView(
           children: <Widget>[
+            ElevatedButton(
+              child: Text('Snack'),
+              onPressed: () {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text('Time for a snack!'),
+                      duration: Duration(seconds: 5),
+                    ),
+                  );
+              },
+            ),
+            _buildImages(),
+            Icon(Icons.fire_extinguisher, size: 100, color: Colors.red),
+            _buildCircleAvatar1(),
+            _buildCircleAvatar2(),
+            _buildRichText(),
             _buildCustomPaint(),
-            _buildImage(),
             SvgPicture.asset('assets/images/github.svg'),
             _buildText(),
-            _buildRichText(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCircleAvatar1() {
+    return CircleAvatar(
+      backgroundImage: NetworkImage(
+        'https://avatars.githubusercontent.com/u/79312?v=4',
+      ),
+      radius: 50,
+    );
+  }
+
+  Widget _buildCircleAvatar2() {
+    return Column(children: [
+      CircleAvatar(
+        backgroundImage: NetworkImage(
+          'https://avatars.githubusercontent.com/u/79312?v=4',
+        ),
+        radius: 50,
+      ),
+    ]);
   }
 
   Widget _buildCustomPaint() {
@@ -80,12 +116,38 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  ClipOval _buildImage() {
-    return ClipOval(
-      child: Image.asset(
-        'assets/images/comet.jpg',
-        //fit: BoxFit.cover,
-      ),
+  Widget _buildImages() {
+    //var url = 'https://avatars.githubusercontent.com/u/79312?v=1';
+    var url =
+        'https://apod.nasa.gov/apod/image/2201/thundercloud_dyer_1592.jpg';
+    return Column(
+      children: [
+        Image.network(
+          url,
+          width: 200,
+          height: 100,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, progress) {
+            if (progress == null) return child;
+            var bytes = progress.cumulativeBytesLoaded;
+            var total = progress.expectedTotalBytes ?? 1;
+            var percent = bytes / total;
+            print('percent = $percent');
+            return LinearProgressIndicator(value: percent);
+          },
+        ),
+        //LinearProgressIndicator(value: 0.5),
+        Banner(
+          message: 'Hello',
+          location: BannerLocation.topStart,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/comet.jpg',
+              //fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -94,7 +156,7 @@ class MyHomePage extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       text: TextSpan(
         //text: 'First',
-        //style: TextStyle(color: Colors.red),
+        style: TextStyle(color: Colors.black),
         children: <TextSpan>[
           TextSpan(
             text: 'First line that is very, very long.',
